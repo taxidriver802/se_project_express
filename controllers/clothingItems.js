@@ -7,9 +7,10 @@ const {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  console.log(name, weather, imageUrl);
+  const owner = req.user._id; // Get the user ID from the request object
+  console.log(owner); // Log the user ID
 
-  ClothingItem.create({ name, weather, imageUrl })
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(201).send(item);
     })
@@ -27,7 +28,7 @@ const getItems = (req, res) => {
       res.send(items);
     })
     .catch((err) => {
-      handleError(res, err);
+      handleError(res, err, 400, "Failed to retrieve items");
     });
 };
 
@@ -70,9 +71,47 @@ const deleteItem = (req, res) => {
     });
 };
 
+const likeItem = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .orFail(new Error("DocumentNotFoundError"))
+    .then((item) => {
+      res.send(item);
+    })
+    .catch((err) => {
+      if (err.message === "DocumentNotFoundError") {
+        return handleDocumentNotFoundError(res, err);
+      }
+      return handleError(res, err);
+    });
+};
+
+const dislikeItem = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
+    .orFail(new Error("DocumentNotFoundError"))
+    .then((item) => {
+      res.send(item);
+    })
+    .catch((err) => {
+      if (err.message === "DocumentNotFoundError") {
+        return handleDocumentNotFoundError(res, err);
+      }
+      return handleError(res, err);
+    });
+};
+
 module.exports = {
   createItem,
   getItems,
   updateItem,
   deleteItem,
+  likeItem,
+  dislikeItem,
 };
