@@ -14,16 +14,21 @@ app.use((req, res, next) => {
 });
 
 const routes = require("./routes");
-
 app.use(routes);
 
 app.use("/", indexRouter);
 
+mongoose.set("strictQuery", true); // Add this line to handle the deprecation warning
+
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
-  .then(() => {})
+  .then(() => {
+    console.log("Connected to DB");
+  })
   .catch((err) => {
     console.error("Error connecting to DB", err);
   });
 
-app.listen(PORT, () => {});
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
