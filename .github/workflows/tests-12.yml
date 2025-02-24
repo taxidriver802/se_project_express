@@ -1,4 +1,4 @@
-run-name: "Tests Project 12: ${{ github.event.head_commit.message }}"
+name: "Tests Project 12: ${{ github.event.head_commit.message }}"
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Set up GitHub Actions
         uses: actions/checkout@v4
-      - name: Check if sprint file exist
+      - name: Check if sprint file exists
         run: bash .github/bin/check-sprint.sh
       - name: Get sprint number
         id: sprint
