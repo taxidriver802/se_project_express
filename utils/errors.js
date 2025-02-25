@@ -1,12 +1,23 @@
-const handleError = (res, err, status = 500, message = err.message) => {
+const {
+  statusBadRequest,
+  statusNotFound,
+  statusDefault,
+} = require("./constants");
+
+const handleError = (
+  res,
+  err,
+  status = statusDefault,
+  message = err.message,
+) => {
   res.status(status).send({ message });
 };
 
 const handleValidationError = (res, err) =>
-  handleError(res, err, 400, "Invalid data");
+  handleError(res, err, statusBadRequest, "Invalid data");
 
 const handleDocumentNotFoundError = (res, err) =>
-  handleError(res, err, 404, "Item not found");
+  handleError(res, err, statusNotFound, "Item not found");
 
 module.exports = {
   handleError,

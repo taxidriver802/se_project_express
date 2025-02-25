@@ -4,11 +4,16 @@ const {
   handleValidationError,
   handleDocumentNotFoundError,
 } = require("../utils/errors");
+const {
+  statusOk,
+  statusCreated,
+  statusBadRequest,
+} = require("../utils/constants");
 
 // GET /users
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.status(statusOk).send(users))
     .catch((err) => handleError(res, err));
 };
 
@@ -17,7 +22,7 @@ const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
+    .then((user) => res.status(statusCreated).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return handleValidationError(res, err);
@@ -31,27 +36,10 @@ const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail(new Error("DocumentNotFoundError"))
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(statusOk).send(user))
     .catch((err) => {
       if (err.name === "CastError") {
-        return handleError(res, err, 400, "Invalid user ID");
-      }
-      if (err.message === "DocumentNotFoundError") {
-        return handleDocumentNotFoundError(res, err);
-      }
-      return handleError(res, err);
-    });
-};
-
-// DELETE /users/:userId
-const deleteUser = (req, res) => {
-  const { userId } = req.params;
-  User.findByIdAndRemove(userId)
-    .orFail(new Error("DocumentNotFoundError"))
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        return handleError(res, err, 400, "Invalid user ID");
+        return handleError(res, err, statusBadRequest, "Invalid user ID");
       }
       if (err.message === "DocumentNotFoundError") {
         return handleDocumentNotFoundError(res, err);
@@ -64,5 +52,4 @@ module.exports = {
   getUsers,
   createUser,
   getUser,
-  deleteUser,
 };

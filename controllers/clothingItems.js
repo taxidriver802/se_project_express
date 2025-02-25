@@ -4,13 +4,19 @@ const {
   handleValidationError,
   handleDocumentNotFoundError,
 } = require("../utils/errors");
+const {
+  statusOk,
+  statusCreated,
+  statusBadRequest,
+  statusDefault,
+} = require("../utils/constants");
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
-    .then((item) => res.status(201).send(item))
+    .then((item) => res.status(statusCreated).send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return handleValidationError(res, err);
@@ -21,40 +27,20 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
-    .catch((err) => handleError(res, err, 400, "Failed to retrieve items"));
-};
-
-const updateItem = (req, res) => {
-  const { id } = req.params;
-  const { name, weather, imageUrl } = req.body;
-
-  ClothingItem.findByIdAndUpdate(
-    id,
-    { name, weather, imageUrl },
-    { new: true, runValidators: true },
-  )
-    .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => res.status(200).send(item))
-    .catch((err) => {
-      if (err.message === "DocumentNotFoundError") {
-        return handleDocumentNotFoundError(res, err);
-      }
-      if (err.name === "ValidationError") {
-        return handleValidationError(res, err);
-      }
-      return handleError(res, err);
-    });
+    .then((items) => res.status(statusOk).send(items))
+    .catch((err) =>
+      handleError(res, err, statusDefault, "Failed to retrieve items"),
+    );
 };
 
 const deleteItem = (req, res) => {
   const { id } = req.params;
   ClothingItem.findByIdAndDelete(id)
     .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => res.status(200).send(item))
+    .then((item) => res.status(statusOk).send(item))
     .catch((err) => {
       if (err.name === "CastError") {
-        return handleError(res, err, 400, "Invalid item ID");
+        return handleError(res, err, statusBadRequest, "Invalid item ID");
       }
       if (err.message === "DocumentNotFoundError") {
         return handleDocumentNotFoundError(res, err);
@@ -70,10 +56,10 @@ const likeItem = (req, res) => {
     { new: true },
   )
     .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => res.status(200).send(item))
+    .then((item) => res.status(statusOk).send(item))
     .catch((err) => {
       if (err.name === "CastError") {
-        return handleError(res, err, 400, "Invalid item ID");
+        return handleError(res, err, statusBadRequest, "Invalid item ID");
       }
       if (err.message === "DocumentNotFoundError") {
         return handleDocumentNotFoundError(res, err);
@@ -89,10 +75,10 @@ const dislikeItem = (req, res) => {
     { new: true },
   )
     .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => res.status(200).send(item))
+    .then((item) => res.status(statusOk).send(item))
     .catch((err) => {
       if (err.name === "CastError") {
-        return handleError(res, err, 400, "Invalid item ID");
+        return handleError(res, err, statusBadRequest, "Invalid item ID");
       }
       if (err.message === "DocumentNotFoundError") {
         return handleDocumentNotFoundError(res, err);
@@ -104,7 +90,6 @@ const dislikeItem = (req, res) => {
 module.exports = {
   createItem,
   getItems,
-  updateItem,
   deleteItem,
   likeItem,
   dislikeItem,
