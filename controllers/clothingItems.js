@@ -7,12 +7,10 @@ const {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  const owner = req.user._id; // Get the user ID from the request object
+  const owner = req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
-    .then((item) => {
-      res.status(201).send(item);
-    })
+    .then((item) => res.status(201).send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return handleValidationError(res, err);
@@ -23,12 +21,8 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => {
-      res.status(200).send(items);
-    })
-    .catch((err) => {
-      handleError(res, err, 400, "Failed to retrieve items");
-    });
+    .then((items) => res.status(200).send(items))
+    .catch((err) => handleError(res, err, 400, "Failed to retrieve items"));
 };
 
 const updateItem = (req, res) => {
@@ -41,9 +35,7 @@ const updateItem = (req, res) => {
     { new: true, runValidators: true },
   )
     .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => {
-      res.status(200).send(item);
-    })
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       if (err.message === "DocumentNotFoundError") {
         return handleDocumentNotFoundError(res, err);
@@ -59,9 +51,7 @@ const deleteItem = (req, res) => {
   const { id } = req.params;
   ClothingItem.findByIdAndDelete(id)
     .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => {
-      res.status(200).send(item);
-    })
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       if (err.name === "CastError") {
         return handleError(res, err, 400, "Invalid item ID");
@@ -80,9 +70,7 @@ const likeItem = (req, res) => {
     { new: true },
   )
     .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => {
-      res.status(200).send(item);
-    })
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       if (err.name === "CastError") {
         return handleError(res, err, 400, "Invalid item ID");
@@ -101,9 +89,7 @@ const dislikeItem = (req, res) => {
     { new: true },
   )
     .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => {
-      res.status(200).send(item);
-    })
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       if (err.name === "CastError") {
         return handleError(res, err, 400, "Invalid item ID");
