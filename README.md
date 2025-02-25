@@ -1,9 +1,42 @@
 # WTWR (What to Wear?): Back End
+
 The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization.
-## Running the Project
-`npm run start` — to launch the server 
 
-`npm run dev` — to launch the server with the hot reload feature
+## Project Description
 
-### Testing
-Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+WTWR (What to Wear?) is an application designed to help users decide what to wear based on the weather. The back-end server provides the necessary API endpoints for user authentication, clothing item management, and weather-based recommendations. The server is built using Node.js and Express, with MongoDB as the database.
+
+## Technologies and Techniques Used
+
+- **Node.js**: A JavaScript runtime built on Chrome's V8 JavaScript engine.
+- **Express**: A minimal and flexible Node.js web application framework.
+- **MongoDB**: A NoSQL database for storing user data and clothing items.
+- **Mongoose**: An ODM (Object Data Modeling) library for MongoDB and Node.js.
+- **ESLint**: A tool for identifying and fixing linting issues in JavaScript code.
+- **Prettier**: A code formatter to ensure consistent code style.
+- **GitHub Actions**: For continuous integration and deployment.
+
+## API Endpoints
+
+The server provides the following API endpoints:
+
+- **User Routes**:
+
+  - `POST /signup` — Register a new user
+  - `POST /signin` — Authenticate a user and return a JWT
+  - `GET /users` — Get a list of all users
+  - `GET /users/:userId` — Get a specific user by ID
+  - `DELETE /users/:userId` — Delete a user by ID
+
+- **Clothing Item Routes**:
+  - `POST /items` — Add a new clothing item
+  - `GET /items` — Get a list of all clothing items
+  - `GET /items/:itemId` — Get a specific clothing item by ID
+  - `DELETE /items/:itemId` — Delete a clothing item by ID
+  - `PUT /items/:itemId/like` — Like a clothing item
+  - `DELETE /items/:itemId/like` — Unlike a clothing item
+
+
+
+
+
