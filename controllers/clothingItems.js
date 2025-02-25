@@ -7,7 +7,7 @@ const {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  const owner = req.user._id;
+  const owner = req.user._id; // Get the user ID from the request object
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
@@ -24,7 +24,7 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => {
-      res.send(items);
+      res.status(200).send(items);
     })
     .catch((err) => {
       handleError(res, err, 400, "Failed to retrieve items");
@@ -42,7 +42,7 @@ const updateItem = (req, res) => {
   )
     .orFail(new Error("DocumentNotFoundError"))
     .then((item) => {
-      res.send(item);
+      res.status(200).send(item);
     })
     .catch((err) => {
       if (err.message === "DocumentNotFoundError") {
@@ -60,9 +60,12 @@ const deleteItem = (req, res) => {
   ClothingItem.findByIdAndDelete(id)
     .orFail(new Error("DocumentNotFoundError"))
     .then((item) => {
-      res.send(item);
+      res.status(200).send(item);
     })
     .catch((err) => {
+      if (err.name === "CastError") {
+        return handleError(res, err, 400, "Invalid item ID");
+      }
       if (err.message === "DocumentNotFoundError") {
         return handleDocumentNotFoundError(res, err);
       }
@@ -78,9 +81,12 @@ const likeItem = (req, res) => {
   )
     .orFail(new Error("DocumentNotFoundError"))
     .then((item) => {
-      res.send(item);
+      res.status(200).send(item);
     })
     .catch((err) => {
+      if (err.name === "CastError") {
+        return handleError(res, err, 400, "Invalid item ID");
+      }
       if (err.message === "DocumentNotFoundError") {
         return handleDocumentNotFoundError(res, err);
       }
@@ -96,9 +102,12 @@ const dislikeItem = (req, res) => {
   )
     .orFail(new Error("DocumentNotFoundError"))
     .then((item) => {
-      res.send(item);
+      res.status(200).send(item);
     })
     .catch((err) => {
+      if (err.name === "CastError") {
+        return handleError(res, err, 400, "Invalid item ID");
+      }
       if (err.message === "DocumentNotFoundError") {
         return handleDocumentNotFoundError(res, err);
       }
