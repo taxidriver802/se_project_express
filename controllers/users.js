@@ -29,7 +29,12 @@ const getUser = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      handleCastNotFoundError(res, err);
+      if (err.name === "CastError") {
+        return handleError(res, err, 400, "Invalid user ID");
+      }
+      if (err.message === "DocumentNotFoundError") {
+        return handleError(res, err, 404, "User not found");
+      }
       return handleError(res, err);
     });
 };
@@ -41,7 +46,12 @@ const deleteUser = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      handleCastNotFoundError(res, err);
+      if (err.name === "CastError") {
+        return handleError(res, err, 400, "Invalid user ID");
+      }
+      if (err.message === "DocumentNotFoundError") {
+        return handleError(res, err, 404, "User not found");
+      }
       return handleError(res, err);
     });
 };
