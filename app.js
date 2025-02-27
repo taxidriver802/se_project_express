@@ -4,7 +4,7 @@ const auth = require("./middlewares/auth");
 const cors = require("cors");
 
 const indexRouter = require("./routes/index");
-const itemsRouter = require("./routes/items");
+const itemsRouter = require("./routes/clothingItem");
 const usersRouter = require("./routes/users");
 const { login, createUser } = require("./controllers/users");
 
@@ -13,15 +13,15 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-s;
-app.post("/users/signin", login);
-app.post("/users/signup", createUser);
-app.use("/items", itemsRouter);
+
+app.post("/signin", login);
+app.post("/signup", createUser);
 
 app.use(auth);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/items", itemsRouter);
 
 mongoose.set("strictQuery", true);
 

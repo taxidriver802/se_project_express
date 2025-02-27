@@ -12,7 +12,6 @@ const {
   statusCreated,
   statusBadRequest,
   statusConflict,
-  statusUnauthorized,
 } = require("../utils/constants");
 
 // GET /users
@@ -46,7 +45,9 @@ const createUser = (req, res) => {
         return handleValidationError(res, err);
       }
       if (err.code === 11000) {
-        return handleError(res, err, statusConflict, "Email already exists");
+        return res
+          .status(statusConflict)
+          .json({ message: "Email already exists" });
       }
       return handleError(res, err);
     });
@@ -67,13 +68,13 @@ const login = (req, res) => {
       return handleError(
         res,
         err,
-        statusUnauthorized,
+        statusBadRequest,
         "Incorrect email or password",
       );
     });
 };
 
-// GET /users/:userId
+// GET /users/me
 const getCurrentUser = (req, res) => {
   const userId = req.user._id;
   User.findById(userId)

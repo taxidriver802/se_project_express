@@ -10,9 +10,12 @@ const {
   statusBadRequest,
   statusDefault,
   statusUnauthorized,
+  statusForbidden,
 } = require("../utils/constants");
 
 const createItem = (req, res) => {
+  console.log(req.user);
+
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -35,7 +38,7 @@ const getItems = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  const { itemId } = req.params;
+  const itemId = req.params.id;
   const userId = req.user._id;
 
   ClothingItem.findById(itemId)
@@ -45,12 +48,22 @@ const deleteItem = (req, res) => {
         return handleError(
           res,
           new Error("Forbidden"),
-          statusUnauthorized,
+          statusForbidden,
           "You do not have permission to delete this item",
         );
       }
       return ClothingItem.findByIdAndDelete(itemId)
-        .then((deletedItem) => res.status(statusOk).send(deletedItem))
+        .then((deletedItem) => {
+          if (!deletedItem) {
+            return handleError(
+              res,
+              new Error("Failed to delete item"),
+              statusDefault,
+              "Failed to delete item",
+            );
+          }
+          return res.status(statusOk).send(deletedItem);
+        })
         .catch((err) =>
           handleError(res, err, statusDefault, "Failed to delete item"),
         );
