@@ -67,12 +67,7 @@ const login = (req, res) => {
       res.status(statusOk).send({ token });
     })
     .catch((err) => {
-      return handleError(
-        res,
-        err,
-        statusBadRequest,
-        "Incorrect email or password",
-      );
+      handleError(res, err, statusBadRequest, "Incorrect email or password");
     });
 };
 
