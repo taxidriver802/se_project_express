@@ -14,8 +14,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 s;
-app.post("/signin", login);
-app.post("/signup", createUser);
+app.post("/users/signin", login);
+app.post("/users/signup", createUser);
 app.use("/items", itemsRouter);
 
 app.use(auth);
