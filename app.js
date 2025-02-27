@@ -1,23 +1,27 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const auth = require("./middlewares/auth");
+const cors = require("cors");
+
 const indexRouter = require("./routes/index");
+const itemsRouter = require("./routes/items");
+const usersRouter = require("./routes/users");
+const { login, createUser } = require("./controllers/users");
 
 const { PORT = 3001 } = process.env;
 const app = express();
 
+app.use(cors());
 app.use(express.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: "5d8b8592978f8bd833ca8133",
-  };
-  next();
-});
+s;
+app.post("/signin", login);
+app.post("/signup", createUser);
+app.use("/items", itemsRouter);
 
-const routes = require("./routes");
-
-app.use(routes);
+app.use(auth);
 
 app.use("/", indexRouter);
+app.use("/users", usersRouter);
 
 mongoose.set("strictQuery", true);
 

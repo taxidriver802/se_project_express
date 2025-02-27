@@ -9,6 +9,7 @@ const {
   statusCreated,
   statusBadRequest,
   statusDefault,
+  statusUnauthorized,
 } = require("../utils/constants");
 
 const createItem = (req, res) => {
@@ -34,10 +35,26 @@ const getItems = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  const { id } = req.params;
-  ClothingItem.findByIdAndDelete(id)
+  const { itemId } = req.params;
+  const userId = req.user._id;
+
+  ClothingItem.findById(itemId)
     .orFail(new Error("DocumentNotFoundError"))
-    .then((item) => res.status(statusOk).send(item))
+    .then((item) => {
+      if (item.owner.toString() !== userId) {
+        return handleError(
+          res,
+          new Error("Forbidden"),
+          statusUnauthorized,
+          "You do not have permission to delete this item",
+        );
+      }
+      return ClothingItem.findByIdAndDelete(itemId)
+        .then((deletedItem) => res.status(statusOk).send(deletedItem))
+        .catch((err) =>
+          handleError(res, err, statusDefault, "Failed to delete item"),
+        );
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         return handleError(res, err, statusBadRequest, "Invalid item ID");
