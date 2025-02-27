@@ -1,6 +1,8 @@
-const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+const User = require("../models/user");
+
 const { JWT_SECRET } = require("../utils/config");
 const {
   handleError,
@@ -27,14 +29,14 @@ const createUser = (req, res) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hashedPassword) => {
-      return User.create({
+    .then((hashedPassword) =>
+      User.create({
         name,
         avatar,
         email,
         password: hashedPassword,
-      });
-    })
+      }),
+    )
     .then((user) => {
       const userWithoutPassword = user.toObject();
       delete userWithoutPassword.password;

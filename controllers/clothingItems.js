@@ -9,7 +9,6 @@ const {
   statusCreated,
   statusBadRequest,
   statusDefault,
-  statusUnauthorized,
   statusForbidden,
 } = require("../utils/constants");
 
