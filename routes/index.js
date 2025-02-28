@@ -1,5 +1,4 @@
 const express = require("express");
-const auth = require("../middlewares/auth");
 const itemsRouter = require("./clothingItem");
 const usersRouter = require("./users");
 const { login, createUser } = require("../controllers/users");
@@ -12,9 +11,9 @@ const router = express.Router();
 router.post("/signin", login);
 router.post("/signup", createUser);
 
-// Protected routes
-router.use("/items", auth, itemsRouter);
-router.use("/users", auth, usersRouter);
+// Routes
+router.use("/items", itemsRouter);
+router.use("/users", usersRouter);
 
 router.use((req, res) => {
   res.status(statusNotFound).send({ message: "Route not found" });
