@@ -1,12 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const auth = require("./middlewares/auth");
 
-const indexRouter = require("./routes/index");
-const itemsRouter = require("./routes/clothingItem");
-const usersRouter = require("./routes/users");
-const { login, createUser } = require("./controllers/users");
+const routes = require("./routes");
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -14,14 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post("/signin", login);
-app.post("/signup", createUser);
-
-app.use(auth);
-
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/items", itemsRouter);
+app.use(routes);
 
 mongoose.set("strictQuery", true);
 

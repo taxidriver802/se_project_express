@@ -1,11 +1,18 @@
-const router = require("express").Router();
-const clothingItem = require("./clothingItem");
-const userRouter = require("./users");
+const express = require("express");
+const auth = require("../middlewares/auth");
+const itemsRouter = require("./clothingItem");
+const usersRouter = require("./users");
+const { login, createUser } = require("../controllers/users");
 
-const { statusNotFound } = require("../utils/constants");
+const router = express.Router();
 
-router.use("/items", clothingItem);
-router.use("/users", userRouter);
+// Public routes
+router.post("/signin", login);
+router.post("/signup", createUser);
+
+// Protected routes
+router.use("/items", auth, itemsRouter);
+router.use("/users", auth, usersRouter);
 
 router.use((req, res) => {
   res.status(statusNotFound).send({ message: "Route not found" });

@@ -14,14 +14,8 @@ const {
   statusCreated,
   statusBadRequest,
   statusConflict,
+  statusUnauthorized,
 } = require("../utils/constants");
-
-// GET /users
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(statusOk).send(users))
-    .catch((err) => handleError(res, err));
-};
 
 // POST /users
 const createUser = (req, res) => {
@@ -59,6 +53,12 @@ const createUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res
+      .status(statusBadRequest)
+      .json({ message: "Email and password are required" });
+  }
+
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -67,7 +67,17 @@ const login = (req, res) => {
       res.status(statusOk).send({ token });
     })
     .catch((err) => {
-      handleError(res, err, statusBadRequest, "Incorrect email or password");
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(statusUnauthorized)
+          .json({ message: "Incorrect email or password" });
+      }
+      return handleError(
+        res,
+        err,
+        statusBadRequest,
+        "Incorrect email or password",
+      );
     });
 };
 
@@ -112,7 +122,6 @@ const updateCurrentUser = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   createUser,
   getCurrentUser,
   login,
