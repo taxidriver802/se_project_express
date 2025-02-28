@@ -24,19 +24,12 @@ The server provides the following API endpoints:
 
   - `POST /signup` — Register a new user
   - `POST /signin` — Authenticate a user and return a JWT
-  - `GET /users` — Get a list of all users
-  - `GET /users/:userId` — Get a specific user by ID
-  - `DELETE /users/:userId` — Delete a user by ID
+  - `GET /users/me` — Get the current authenticated user
+  - `PATCH /users/me` — Update the current authenticated user
 
 - **Clothing Item Routes**:
-  - `POST /items` — Add a new clothing item
+  - `POST /items` — Add a new clothing item (protected)
   - `GET /items` — Get a list of all clothing items
-  - `GET /items/:itemId` — Get a specific clothing item by ID
-  - `DELETE /items/:itemId` — Delete a clothing item by ID
-  - `PUT /items/:itemId/like` — Like a clothing item
-  - `DELETE /items/:itemId/like` — Unlike a clothing item
-
-
-
-
-
+  - `DELETE /items/:id` — Delete a clothing item by ID (protected)
+  - `PUT /items/:itemId/likes` — Like a clothing item (protected)
+  - `DELETE /items/:itemId/likes` — Unlike a clothing item (protected)
