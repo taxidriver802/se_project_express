@@ -50,7 +50,7 @@ const createUser = (req, res) => {
 };
 
 // POST /login
-const login = (req, res) => {
+function login(req, res) {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -59,12 +59,12 @@ const login = (req, res) => {
       .json({ message: "Email and password are required" });
   }
 
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.status(statusOk).send({ token });
+      return res.status(statusOk).send({ token });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
@@ -79,7 +79,7 @@ const login = (req, res) => {
         "Incorrect email or password",
       );
     });
-};
+}
 
 // GET /users/me
 const getCurrentUser = (req, res) => {

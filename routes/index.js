@@ -4,6 +4,8 @@ const itemsRouter = require("./clothingItem");
 const usersRouter = require("./users");
 const { login, createUser } = require("../controllers/users");
 
+const { statusNotFound } = require("../utils/constants");
+
 const router = express.Router();
 
 // Public routes
