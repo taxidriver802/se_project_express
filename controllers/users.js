@@ -2,34 +2,25 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
-
 const { JWT_SECRET } = require("../utils/config");
-const {
-  handleError,
-  handleValidationError,
-  handleDocumentNotFoundError,
-} = require("../utils/errors");
+
 const {
   statusOk,
   statusCreated,
   statusBadRequest,
   statusConflict,
   statusUnauthorized,
+  statusNotFound,
 } = require("../utils/constants");
 
 // POST /users
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   bcrypt
     .hash(password, 10)
     .then((hashedPassword) =>
-      User.create({
-        name,
-        avatar,
-        email,
-        password: hashedPassword,
-      }),
+      User.create({ name, avatar, email, password: hashedPassword }),
     )
     .then((user) => {
       const userWithoutPassword = user.toObject();
@@ -38,68 +29,55 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return handleValidationError(res, err);
+        return next(new statusBadRequest("Invalid user data"));
       }
       if (err.code === 11000) {
-        return res
-          .status(statusConflict)
-          .json({ message: "Email already exists" });
+        return next(new statusConflict("Email already exists"));
       }
-      return handleError(res, err);
+      next(err);
     });
 };
 
 // POST /login
-function login(req, res) {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(statusBadRequest)
-      .json({ message: "Email and password are required" });
+    return next(new statusBadRequest("Email and password are required"));
   }
 
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.status(statusOk).send({ token });
+      res.status(statusOk).send({ token });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
-        return res
-          .status(statusUnauthorized)
-          .json({ message: "Incorrect email or password" });
+        return next(new statusUnauthorized("Incorrect email or password"));
       }
-      return handleError(
-        res,
-        err,
-        statusBadRequest,
-        "Incorrect email or password",
-      );
+      next(err);
     });
-}
+};
 
 // GET /users/me
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
+
   User.findById(userId)
-    .orFail(new Error("DocumentNotFoundError"))
+    .orFail(() => new statusNotFound("User not found"))
     .then((user) => res.status(statusOk).send(user))
     .catch((err) => {
       if (err.name === "CastError") {
-        return handleError(res, err, statusBadRequest, "Invalid user ID");
+        return next(new statusBadRequest("Invalid user ID"));
       }
-      if (err.message === "DocumentNotFoundError") {
-        return handleDocumentNotFoundError(res, err);
-      }
-      return handleError(res, err);
+      next(err);
     });
 };
 
 // PATCH /users/me
-const updateCurrentUser = (req, res) => {
+const updateCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
 
@@ -108,16 +86,13 @@ const updateCurrentUser = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true },
   )
-    .orFail(new Error("DocumentNotFoundError"))
+    .orFail(() => new statusNotFound("User not found"))
     .then((user) => res.status(statusOk).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return handleValidationError(res, err);
+        return next(new statusBadRequest("Invalid user update data"));
       }
-      if (err.message === "DocumentNotFoundError") {
-        return handleDocumentNotFoundError(res, err);
-      }
-      return handleError(res, err);
+      next(err);
     });
 };
 
