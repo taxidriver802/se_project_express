@@ -7,7 +7,7 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const routes = require("./routes");
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 const app = express();
 
 app.use(cors());
@@ -33,5 +33,6 @@ mongoose
   });
 
 app.listen(PORT, () => {
+  console.log(`PORT environment variable: ${process.env.PORT}`); // eslint-disable-line no-console
   console.log(`Server is running on port ${PORT}`); // eslint-disable-line no-console
 });
