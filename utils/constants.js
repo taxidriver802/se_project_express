@@ -3,7 +3,7 @@ const statusCreated = 201;
 
 class HttpError extends Error {
   constructor(message, statusCode) {
-    super(message);
+    super(message, statusCode);
     this.statusCode = statusCode;
   }
 }
