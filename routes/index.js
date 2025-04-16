@@ -16,7 +16,8 @@ router.use("/items", itemsRouter);
 router.use("/users", usersRouter);
 
 router.use((req, res) => {
-  res.status(statusNotFound).send({ message: "Route not found" });
+  const notFoundError = new statusNotFound();
+  res.status(notFoundError.statusCode).send({ message: notFoundError.message });
 });
 
 module.exports = router;
