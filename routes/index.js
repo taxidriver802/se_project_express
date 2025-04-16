@@ -12,8 +12,8 @@ router.post("/signin", login);
 router.post("/signup", createUser);
 
 // Routes
-router.use("/items", auth, itemsRouter);
-router.use("/users", auth, usersRouter);
+router.use("/items", itemsRouter);
+router.use("/users", usersRouter);
 
 router.use((req, res) => {
   const notFoundError = new statusNotFound();
