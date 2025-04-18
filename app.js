@@ -4,7 +4,7 @@ const cors = require("cors");
 const errorHandler = require("./utils/error-handler");
 const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-
+require("dotenv").config();
 const routes = require("./routes");
 
 const { PORT = 3001 } = process.env;
