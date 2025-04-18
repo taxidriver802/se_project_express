@@ -1,4 +1,12 @@
-# WTWR (What to Wear?): Back End
+# [WTWR (What to Wear?) backend]
+
+## Link to frontend Repository
+
+https://github.com/taxidriver802/se_project_react
+
+# [Domain (https://www.wearwithweather.jumpingcrab.com/)]
+
+The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization. WTWR (What to Wear?): Back End
 
 The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization.
 
