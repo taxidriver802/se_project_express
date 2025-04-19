@@ -19,6 +19,10 @@ const validateClothingItem = celebrate({
       "string.empty": 'The "imageUrl" field must be filled in',
       "string.uri": 'the "imageUrl" field must be a valid url',
     }),
+    weather: Joi.string().required().valid("hot", "warm", "cold").messages({
+      "any.only":
+        'You must select one of the following options: "hot", "warm", or "cold"',
+    }),
   }),
 });
 
@@ -57,10 +61,34 @@ const validateLogin = celebrate({
 
 const validateId = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().length(24).hex().required().messages({
+    itemId: Joi.string().length(24).hex().required().messages({
       "string.length": 'The "id" field must be 24 characters long',
       "string.hex": 'The "id" field must be a hexadecimal string',
       "string.empty": 'The "id" field must be filled in',
+    }),
+  }),
+});
+
+const validateItemId = celebrate({
+  params: Joi.object().keys({
+    itemId: Joi.string().length(24).hex().required().messages({
+      "string.length": 'The "itemId" field must be 24 characters long',
+      "string.hex": 'The "itemId" field must be a hexadecimal string',
+      "string.empty": 'The "itemId" field must be filled in',
+    }),
+  }),
+});
+
+const validateUpdateUser = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30).messages({
+      "string.min": "Name must be at least 2 characters long",
+      "string.max": "Name must be at most 30 characters long",
+      "string.empty": 'The "name" field must be filled in',
+    }),
+    avatar: Joi.string().required().custom(validateURL).messages({
+      "string.empty": 'The "avatar" field must be filled in',
+      "string.uri": 'The "avatar" field must be a valid URL',
     }),
   }),
 });
@@ -70,5 +98,7 @@ module.exports = {
   validateUser,
   validateLogin,
   validateId,
+  validateItemId,
   validateURL,
+  validateUpdateUser,
 };
