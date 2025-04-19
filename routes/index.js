@@ -3,7 +3,7 @@ const itemsRouter = require("./clothingItem");
 const usersRouter = require("./users");
 const { login, createUser } = require("../controllers/users");
 const auth = require("../middlewares/auth");
-const { statusNotFound } = require("../utils/constants");
+const { StatusNotFound } = require("../utils/StatusError/index.js");
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.use("/items", itemsRouter);
 router.use("/users", usersRouter);
 
 router.use((req, res) => {
-  const notFoundError = new statusNotFound();
+  const notFoundError = new StatusNotFound();
   res.status(notFoundError.statusCode).send({ message: notFoundError.message });
 });
 
