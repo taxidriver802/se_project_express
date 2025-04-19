@@ -1,20 +1,20 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { JWT_SECRET } = require("../utils/config.js");
+const { JWT_SECRET } = require("../utils/config");
 
 const {
   StatusBadRequest,
   StatusConflict,
   StatusUnauthorized,
   StatusNotFound,
-} = require("../utils/StatusError/index.js");
+} = require("../utils/StatusError/index");
 
 // POST /users
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
-  bcrypt
+  return bcrypt
     .hash(password, 10)
     .then((hashedPassword) =>
       User.create({ name, avatar, email, password: hashedPassword }),
@@ -43,7 +43,7 @@ const login = (req, res, next) => {
     return next(new StatusBadRequest("Email and password are required"));
   }
 
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
@@ -54,7 +54,7 @@ const login = (req, res, next) => {
       if (err.message === "Incorrect email or password") {
         return next(new StatusUnauthorized("Incorrect email or password"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -62,14 +62,14 @@ const login = (req, res, next) => {
 const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
 
-  User.findById(userId)
+  return User.findById(userId)
     .orFail(() => new StatusNotFound("User not found"))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "CastError") {
         return next(new StatusBadRequest("Invalid user ID"));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -78,7 +78,7 @@ const updateCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
 
-  User.findByIdAndUpdate(
+  return User.findByIdAndUpdate(
     userId,
     { name, avatar },
     { new: true, runValidators: true },
@@ -89,7 +89,7 @@ const updateCurrentUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         return next(new StatusBadRequest("Invalid user update data"));
       }
-      next(err);
+      return next(err);
     });
 };
 

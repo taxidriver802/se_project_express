@@ -4,7 +4,7 @@ const {
   StatusBadRequest,
   StatusNotFound,
   StatusForbidden,
-} = require("../utils/StatusError/index.js");
+} = require("../utils/StatusError/index");
 
 const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
@@ -60,7 +60,7 @@ const likeItem = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new NotFoundError("Item not found"))
+    .orFail(() => new StatusNotFound("Item not found"))
     .then((item) => res.status(200).send(item))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -76,7 +76,7 @@ const dislikeItem = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new NotFoundError("Item not found"))
+    .orFail(() => new StatusNotFound("Item not found"))
     .then((item) => res.status(200).send(item))
     .catch((err) => {
       if (err.name === "CastError") {
