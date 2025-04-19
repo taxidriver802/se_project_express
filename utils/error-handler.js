@@ -1,4 +1,4 @@
-const errorHandler = (err, req, res) => {
+const errorHandler = (err, req, res, next) => {
   console.error(err.message); // Log full error object
 
   const statusCode = err.statusCode || 500;
@@ -8,6 +8,7 @@ const errorHandler = (err, req, res) => {
     success: false,
     error: message,
   });
+  next();
 };
 
 module.exports = errorHandler;
